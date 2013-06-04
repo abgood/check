@@ -5,4 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "define.h"
+#include "collect.h"
+
 #endif

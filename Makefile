@@ -13,7 +13,7 @@ LIBMYSQL = `mysql_config --libs`
 # DIRS = modules
 
 # 执行文件
-TARGET = webcheck
+TARGET = check
 
 # 所有的c文件生成o文件
 %.o:%.c
