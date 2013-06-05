@@ -13,5 +13,12 @@ int main (int argc, char **argv) {
         printf("site信息查询失败,请检查\n");
         exit(1);
     }
+
+    printf("%s\n", site_info->telecom_ip);
+    printf("%s\n", site_info->unicom_ip);
+    printf("%s\n", site_info->domain);
+    printf("%d\n", site_info->port);
+    printf("%d\n", site_info->bind);
+    printf("%d\n", site_info->resource);
     return 0;
 }

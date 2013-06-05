@@ -20,28 +20,82 @@ MYSQL_RES *mysql_result(MYSQL *conn, char *string) {
     return res;
 }
 
+/* site_id比较 */
+int site_id_compare(char *id_token, int site_id) {
+    char id_field_start_token[LEN_8] = {0};
+    char *id_field_end_token;
+    char *id_field;
+    int id_start;
+    int id_end;
+
+    id_field = strstr(id_token, SITE_ID_FIELD);
+    strncpy(id_field_start_token, id_token, id_field - id_token);
+    id_field_end_token = id_field + 1;
+
+    id_start = atoi(id_field_start_token);
+    id_end = atoi(id_field_end_token);
+
+    if ((site_id >= id_start) && (site_id <= id_end)) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 /* 查询site_id结果 */
 void handle_site_id(site_info info, MYSQL_RES *site_name_result, int site_id) {
     char agent[LEN_64] = {0};
     MYSQL_ROW row;
     int info_cols;
-    int site_id_start;
-    int site_id_end;
+    char *agent_start;
+    char *agent_end;
+    char id_field[LEN_32] = {0};
+    char *id_token;
+    int site_id_flag;
+    char id_token_tmp[LEN_16];
 
     info_cols = mysql_num_fields(site_name_result);
     while ((row = mysql_fetch_row(site_name_result))) {
         strncpy(agent, row[1], strlen(row[1]));
-        printf("%s\n", agent);
+        // 找出id域
+        agent_start = strstr(agent, SITE_ID_START) + 1;
+        agent_end = strstr(agent, "合");
+        strncpy(id_field, agent_start, agent_end - agent_start);
+
+        // id 各个域
+        id_token = strtok(id_field, SITE_ID_DELIMITER);
+        while (id_token) {
+            memset(id_token_tmp, 0, LEN_16);
+            strncpy(id_token_tmp, id_token, strlen(id_token));
+            /* site_id比较 */
+            site_id_flag = site_id_compare(id_token_tmp, site_id);
+
+            /* site_id处理 */
+            if (site_id_flag == 1) {
+                info->telecom_ip = (char *)calloc(LEN_16, sizeof(char));
+                info->unicom_ip = (char *)calloc(LEN_16, sizeof(char));
+
+                strncpy(info->telecom_ip, row[3], strlen(row[3]));
+                strncpy(info->unicom_ip, row[4], strlen(row[3]));
+                info->port = atoi(row[5]);
+                info->resource = atoi(row[6]);
+            }
+
+            id_token = strtok(NULL, SITE_ID_DELIMITER);
+        }
     }
 }
 
 site_info collect_info(char *site) {
     MYSQL mysql, *conn;
     MYSQL_RES *site_name_result;
+    MYSQL_RES *site_domain_result;
+    MYSQL_ROW site_domain_row;
     char *site_name;
     char *site_id_tmp;
     int site_id;
     char site_name_sql[LEN_1024] = {0};
+    char site_domain_sql[LEN_1024] = {0};
 
     /* 动态分配site相关信息内存 */
     site_info info;
@@ -82,6 +136,16 @@ site_info collect_info(char *site) {
 
     /* 查询site_id结果 */
     handle_site_id(info, site_name_result, site_id);
+
+    /* 查询domain结果 */
+    sprintf(site_domain_sql, "select * from %s where site_name = \'%s\'", COMMON, site_name);
+    site_domain_result = mysql_result(conn, site_domain_sql);
+    while ((site_domain_row = mysql_fetch_row(site_domain_result))) {
+        info->domain = (char *)calloc(LEN_16, sizeof(char));
+
+        strncpy(info->domain, site_domain_row[2], strlen(site_domain_row[2]));
+        info->bind = atoi(site_domain_row[3]);
+    }
 
     return info;
 }

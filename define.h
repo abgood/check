@@ -14,7 +14,10 @@
 #define LEN_10240 10240
 
 /* 分割符 */
-#define SITE_DELIMITER "_"      /* site分割符 */
+#define SITE_DELIMITER "_"          /* site分割符 */
+#define SITE_ID_START "-"           /* site_id开始分割符 */
+#define SITE_ID_DELIMITER ","       /* site_id之间分割符 */
+#define SITE_ID_FIELD "~"           /* site_id每个分割符 */
 
 /* 表名字 */
 #define INDEPENDENT "indepe_info"
