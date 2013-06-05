@@ -7,5 +7,7 @@
 
 #include "define.h"
 #include "collect.h"
+#include "resolve.h"
+#include "ping.h"
 
 #endif

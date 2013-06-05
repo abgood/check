@@ -3,6 +3,7 @@
 int main (int argc, char **argv) {
     char site[LEN_16] = {0};
     site_info site_info;
+    int resolve_flag;
 
     /* 输入site */
     printf("请输入登陆异常的游戏site(eg. 37wan_0001): ");
@@ -14,11 +15,12 @@ int main (int argc, char **argv) {
         exit(1);
     }
 
-    printf("%s\n", site_info->telecom_ip);
-    printf("%s\n", site_info->unicom_ip);
-    printf("%s\n", site_info->domain);
-    printf("%d\n", site_info->port);
-    printf("%d\n", site_info->bind);
-    printf("%d\n", site_info->resource);
+    /* 域名解析 */
+    if ((resolve_flag = check_resolve(site_info))) {
+        printf("游戏登陆所需的3个域名中有部分解析有问题,请检查\n");
+    }
+
+    /* ping值计算 */
+    check_ping(site_info);
     return 0;
 }
