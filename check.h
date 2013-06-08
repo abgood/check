@@ -30,5 +30,7 @@
 #include "define.h"
 #include "curldata.h"
 #include "conver.h"
+#include "quiry.h"
+#include "handle.h"
 
 #endif

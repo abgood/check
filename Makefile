@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -g -O2 -Wall
 
 # 库
-# LIBMYSQL = `mysql_config --libs`
+LIBMYSQL = `mysql_config --libs`
 LIBCURL = -lcurl
 LIBICONV = -liconv
 

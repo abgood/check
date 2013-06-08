@@ -3,14 +3,14 @@
 size_t copy_data(void *ptr, size_t size, size_t nmemb, void *stream) {
     size_t num;
     // num = fread(ptr, size, nmemb, stream);
-    FILE *fp = fopen("tmp", "w");
+    FILE *fp = fopen(TMP_FILE, "w");
     num = fwrite(ptr, size, nmemb, (FILE *)fp);
     fclose(fp);
     return num;
 }
 
 void read_last_line(char *last_line) {
-    FILE *fp = fopen("tmp", "rb");
+    FILE *fp = fopen(TMP_FILE, "rb");
 
     if (fseek(fp, -1, SEEK_END) != 0) {
         fprintf(stderr, "read file error!\n");
@@ -60,7 +60,11 @@ void curl_data(loc_info info) {
     read_last_line(last_line);
 
     /* code convert */
+#ifndef WINDOWS
     output = conver_code(last_line, "gb2312", "utf-8");
+#else
+    output = last_line;
+#endif
     sscanf(output, "%*[^[][%[^]]%*[^：]：%[^ ] %[^<]", ip, address, agent);
 
     strncpy(info->ip, ip, strlen(ip));
