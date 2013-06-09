@@ -25,6 +25,8 @@
 /* 分割符 */
 #define D_SITE_NAME "="
 #define D_SITE_ID "-"
+#define D_ID_FIELD ","
+#define D_ID_RANGE "~"
 
 /* local struct */
 typedef struct local_info {
