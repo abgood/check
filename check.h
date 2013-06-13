@@ -32,5 +32,7 @@
 #include "conver.h"
 #include "quiry.h"
 #include "handle.h"
+#include "resolve.h"
+#include "ping.h"
 
 #endif

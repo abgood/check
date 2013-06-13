@@ -28,6 +28,14 @@
 #define D_ID_FIELD ","
 #define D_ID_RANGE "~"
 
+/* 前缀 */
+#define S_PREFIX "s"
+#define RES_PREFIX "res"
+#define ASS_PREFIX "assist"
+
+/* cdn domain */
+#define CDN "cdn.shenqu.7road.net"
+
 /* local struct */
 typedef struct local_info {
     char *ip;

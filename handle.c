@@ -1,5 +1,53 @@
 #include "check.h"
 
+/* handle common_info */
+void handle_common(site_info output, char *input_name, int input_id, MYSQL_RES *res) {
+    MYSQL_ROW row;
+    char site[LEN_32] = {0};
+    char domain[LEN_256] = {0};
+    char *token;
+    char *d_token;
+    int num = 1;
+    int d_num = 1;
+
+    while ((row = mysql_fetch_row(res))) {
+        memset(site, '\0', LEN_32);
+        memset(domain, '\0', LEN_256);
+        strncpy(site, row[1], strlen(row[1]));
+        strncpy(domain, row[2], strlen(row[2]));
+
+        /* one site_name */
+        if (!strstr(site, D_ID_FIELD)) {
+            output->domain = row[2];
+        } else {        /* many site_name */
+            /* site_name */
+            token = strtok(site, D_ID_FIELD);
+            while (token) {
+                if (strcmp(token, input_name) == 0) {
+                    break;
+                }
+                num++;
+                token = strtok(NULL, D_ID_FIELD);
+            }
+
+            /* domain */
+            d_token = strtok(domain, D_ID_FIELD);
+            while (d_token) {
+                if (num == d_num) {
+                    output->domain = d_token;
+                }
+
+                d_num++;
+                d_token = strtok(NULL, D_ID_FIELD);
+            }
+
+            /* set site_id */
+            output->site_id = input_id;
+        }
+    }
+}
+
+/* handle indepe_info */
 void handle_indepe(site_info output, char *input_name, int input_id, MYSQL_RES *res) {
     MYSQL_ROW row;
     char agent[LEN_128] = {0};
@@ -50,9 +98,12 @@ void handle_indepe(site_info output, char *input_name, int input_id, MYSQL_RES *
         /* if have "~", compare id fields */
         if (!strstr(id_start, D_ID_RANGE)) {
             if (input_id == atoi(id_start)) {
-                printf("%s\n", agent);
+                output->telecom_ip = row[2];
+                output->unicom_ip = row[3];
+                output->port = atoi(row[4]);
+                output->resource = atoi(row[5]);
             }
-            continue;
+            break;
         } else {
             strncpy(id_start_tmp, id_start, strlen(id_start));
             token = strtok(id_start_tmp, D_ID_FIELD);
@@ -72,6 +123,7 @@ void handle_indepe(site_info output, char *input_name, int input_id, MYSQL_RES *
 
                 token = strtok(NULL, D_ID_FIELD);
             }
+            break;
         }
     }
 }
