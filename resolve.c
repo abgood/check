@@ -5,8 +5,6 @@ char *local_domain_to_ip(char *prefix, char *domain) {
     struct hostent *host_name;
     char *host_ip;
 
-    // printf("%s\n", domain);
-
     if ((host_name = gethostbyname(domain)) == NULL) {
         fprintf(stderr, "%s gethostbyname fail!!!\n", prefix);
         exit(1);
@@ -27,35 +25,99 @@ void chk_resolve(char *domain, char *telecom_ip, char *unicom_ip, char *agent, c
     if (strcmp(agent, "电信") == 0) {
         if (strcmp(host_ip, telecom_ip) == 0) {
             printf("%s domain resolve %s ip, success!!!\n\n", prefix, agent);
+            return;
         }
 
         if (strcmp(host_ip, unicom_ip) == 0) {
             printf("%s domain not resolve %s ip, failed!!!\n", prefix, agent);
-            printf("player local resolve: %s %s\n\n", telecom_ip, domain);
-            exit(1);
+            goto out_t;
         }
+
+out_t:  printf("player local resolve: %s %s\n\n", telecom_ip, domain);
+        exit(1);
     }
 
     if (strcmp(agent, "联通") == 0) {
         if (strcmp(host_ip, unicom_ip) == 0) {
             printf("%s domain resolve %s ip, success!!!\n\n", prefix, agent);
+            return;
         }
 
         if (strcmp(host_ip, telecom_ip) == 0) {
             printf("%s domain not resolve %s ip, failed!!!\n", prefix, agent);
-            printf("player local resolve: %s %s\n\n", unicom_ip, domain);
-            exit(1);
+            goto out_u;
+        }
+
+out_u:  printf("player local resolve: %s %s\n\n", unicom_ip, domain);
+        exit(1);
+    }
+}
+
+/* 检查cdn域名解析ip */
+int check_ip(char *host_ip, MYSQL_RES *res, int res_flag) {
+    MYSQL_ROW row;
+    char cdn_ip[LEN_32] = {0};
+
+    mysql_data_seek(res, 0);
+
+    while ((row = mysql_fetch_row(res))) {
+        memset(cdn_ip, '\0', LEN_32);
+        strncpy(cdn_ip, row[res_flag], strlen(row[res_flag]));
+
+        if (strcmp(cdn_ip, host_ip) == 0) {
+            return 0;
         }
     }
+    return 1;
+}
 
+/* cdn正确解析ip */
+void set_cdn_ip(MYSQL_RES *res, int res_flag) {
+    MYSQL_ROW row;
+
+    mysql_data_seek(res, 0);
+
+    printf("player local resolve:\n");
+    while ((row = mysql_fetch_row(res))) {
+        printf("\t\t     %s %s\n", row[res_flag], CDN);
+    }
 }
 
 /* cdn domain resolve */
-void check_cdn(MYSQL_RES *res) {
+void check_cdn(MYSQL_RES *res, char *agent) {
     char *host_ip;
 
     host_ip = local_domain_to_ip(CDN_PREFIX, CDN);
-    printf("%s\n", host_ip);
+
+    if (strcmp(agent, "电信") == 0) {
+        if (check_ip(host_ip, res, 1) == 0) {
+            printf("%s domain resolve %s ip, success!!!\n\n", CDN_PREFIX, agent);
+            return;
+        }
+
+        if (check_ip(host_ip, res, 2) == 0) {
+            printf("%s domain not resolve %s ip, failed!!!\n", CDN_PREFIX, agent);
+            goto out_t;
+        }
+
+out_t:  set_cdn_ip(res, 1);
+        exit(1);
+    }
+
+    if (strcmp(agent, "联通") == 0) {
+        if (check_ip(host_ip, res, 2) == 0) {
+            printf("%s domain resolve %s ip, success!!!\n\n", CDN_PREFIX, agent);
+            return;
+        }
+
+        if (check_ip(host_ip, res, 1) == 0) {
+            printf("%s domain not resolve %s ip, failed!!!\n", CDN_PREFIX, agent);
+            goto out_u;
+        }
+
+out_u:  set_cdn_ip(res, 2);
+        exit(1);
+    }
 }
 
 /* domain resolve */
@@ -63,9 +125,6 @@ void check_resolve(site_info info, loc_info player, MYSQL_RES *cdn_res) {
     char s_domain[LEN_64] = {0};
     char res_domain[LEN_64] = {0};
     char ass_domain[LEN_64] = {0};
-    // char domain[LEN_32] = {0};
-
-    // strncpy(domain, info->domain, strlen(info->domain));
 
     sprintf(s_domain, "%s%d%s", S_PREFIX, info->site_id, info->domain);
     sprintf(res_domain, "%s%d%s", RES_PREFIX, info->site_id, info->domain);
@@ -82,6 +141,6 @@ void check_resolve(site_info info, loc_info player, MYSQL_RES *cdn_res) {
 
     /* cdn域名解析检查 */
     if (info->resource) {
-        check_cdn(cdn_res);
+        check_cdn(cdn_res, player->agent);
     }
 }

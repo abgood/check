@@ -1,7 +1,7 @@
 #include "check.h"
 
 void chk_ping(char *domain) {
-    // printf("%s\n", domain);
+    printf("%s\n", domain);
 }
 
 void check_ping(char *domain, int res_flag) {
