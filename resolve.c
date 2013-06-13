@@ -1,18 +1,28 @@
 #include "check.h"
 
-/* 域名解析检查 */
-void chk_resolve(char *domain, char *telecom_ip, char *unicom_ip, char *agent, char *prefix) {
-    /* get local domain resolve ip */
+/* get local domain resolve ip */
+char *local_domain_to_ip(char *prefix, char *domain) {
     struct hostent *host_name;
     char *host_ip;
 
+    // printf("%s\n", domain);
+
     if ((host_name = gethostbyname(domain)) == NULL) {
-        fprintf(stderr, "gethostbyname fail!!!\n");
+        fprintf(stderr, "%s gethostbyname fail!!!\n", prefix);
         exit(1);
     }
 
     /* player local resolve ip */
     host_ip = inet_ntoa(*((struct in_addr *)host_name->h_addr));
+
+    return host_ip;
+}
+
+/* 域名解析检查 */
+void chk_resolve(char *domain, char *telecom_ip, char *unicom_ip, char *agent, char *prefix) {
+    char *host_ip;
+
+    host_ip = local_domain_to_ip(prefix, domain);
 
     if (strcmp(agent, "电信") == 0) {
         if (strcmp(host_ip, telecom_ip) == 0) {
@@ -21,7 +31,7 @@ void chk_resolve(char *domain, char *telecom_ip, char *unicom_ip, char *agent, c
 
         if (strcmp(host_ip, unicom_ip) == 0) {
             printf("%s domain not resolve %s ip, failed!!!\n", prefix, agent);
-            printf("resolve: %s %s\n\n", telecom_ip, domain);
+            printf("player local resolve: %s %s\n\n", telecom_ip, domain);
             exit(1);
         }
     }
@@ -33,25 +43,33 @@ void chk_resolve(char *domain, char *telecom_ip, char *unicom_ip, char *agent, c
 
         if (strcmp(host_ip, telecom_ip) == 0) {
             printf("%s domain not resolve %s ip, failed!!!\n", prefix, agent);
-            printf("resolve: %s %s\n\n", unicom_ip, domain);
+            printf("player local resolve: %s %s\n\n", unicom_ip, domain);
             exit(1);
         }
     }
 
 }
 
+/* cdn domain resolve */
+void check_cdn(MYSQL_RES *res) {
+    char *host_ip;
+
+    host_ip = local_domain_to_ip(CDN_PREFIX, CDN);
+    printf("%s\n", host_ip);
+}
+
 /* domain resolve */
-void check_resolve(site_info info, loc_info player) {
-    char s_domain[LEN_32] = {0};
-    char res_domain[LEN_32] = {0};
-    char ass_domain[LEN_32] = {0};
-    char domain[LEN_32] = {0};
+void check_resolve(site_info info, loc_info player, MYSQL_RES *cdn_res) {
+    char s_domain[LEN_64] = {0};
+    char res_domain[LEN_64] = {0};
+    char ass_domain[LEN_64] = {0};
+    // char domain[LEN_32] = {0};
 
-    strncpy(domain, info->domain, strlen(info->domain));
+    // strncpy(domain, info->domain, strlen(info->domain));
 
-    sprintf(s_domain, "%s%d%s", S_PREFIX, info->site_id, domain);
-    sprintf(res_domain, "%s%d%s", RES_PREFIX, info->site_id, domain);
-    sprintf(ass_domain, "%s%d%s", ASS_PREFIX, info->site_id, domain);
+    sprintf(s_domain, "%s%d%s", S_PREFIX, info->site_id, info->domain);
+    sprintf(res_domain, "%s%d%s", RES_PREFIX, info->site_id, info->domain);
+    sprintf(ass_domain, "%s%d%s", ASS_PREFIX, info->site_id, info->domain);
 
     /* s域名解析检查 */
     chk_resolve(s_domain, info->telecom_ip, info->unicom_ip, player->agent, S_PREFIX);
@@ -61,4 +79,9 @@ void check_resolve(site_info info, loc_info player) {
 
     /* res域名解析检查 */
     chk_resolve(ass_domain, info->telecom_ip, info->unicom_ip, player->agent, ASS_PREFIX);
+
+    /* cdn域名解析检查 */
+    if (info->resource) {
+        check_cdn(cdn_res);
+    }
 }

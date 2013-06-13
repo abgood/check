@@ -10,6 +10,9 @@ void handle_common(site_info output, char *input_name, int input_id, MYSQL_RES *
     int num = 1;
     int d_num = 1;
 
+    /* site_info 动态分配domain内存 */
+    output->domain = (char *)malloc(LEN_64 * sizeof(char));
+
     while ((row = mysql_fetch_row(res))) {
         memset(site, '\0', LEN_32);
         memset(domain, '\0', LEN_256);
@@ -18,7 +21,7 @@ void handle_common(site_info output, char *input_name, int input_id, MYSQL_RES *
 
         /* one site_name */
         if (!strstr(site, D_ID_FIELD)) {
-            output->domain = row[2];
+            strncpy(output->domain, row[2], strlen(row[2]));
         } else {        /* many site_name */
             /* site_name */
             token = strtok(site, D_ID_FIELD);
@@ -34,7 +37,7 @@ void handle_common(site_info output, char *input_name, int input_id, MYSQL_RES *
             d_token = strtok(domain, D_ID_FIELD);
             while (d_token) {
                 if (num == d_num) {
-                    output->domain = d_token;
+                    strncpy(output->domain, d_token, strlen(d_token));
                 }
 
                 d_num++;

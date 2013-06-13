@@ -10,10 +10,12 @@ int main (int argc, char **argv) {
     char site_id[LEN_16] = {0};
     char indepe_sql[LEN_256] = {0};
     char common_sql[LEN_256] = {0};
-    char domain[LEN_32] = {0};
+    char cdn_sql[LEN_256] = {0};
+    char s_domain[LEN_32] = {0};
 
     MYSQL_RES *indepe_res;
     MYSQL_RES *common_res;
+    MYSQL_RES *cdn_res;
 
     /* init player_info */
     if (!(player_info = malloc(sizeof(struct local_info)))) {
@@ -61,13 +63,16 @@ int main (int argc, char **argv) {
     /* handle mysql_res */
     handle_common(site_info, site_name, atoi(site_id), common_res);
 
-    strncpy(domain, site_info->domain, strlen(site_info->domain));
+    /* cdn result set */
+    sprintf(cdn_sql, "select * from %s", CDNINF);
+    cdn_res = quiry(cdn_sql);
 
     /* domain resolve */
-    check_resolve(site_info, player_info);
+    check_resolve(site_info, player_info, cdn_res);
 
     /* check ping */
-    check_ping(site_info, domain);
+    sprintf(s_domain, "%s%d%s", S_PREFIX, site_info->site_id, site_info->domain);
+    check_ping(s_domain, site_info->resource);
 
     /* win program at the end of the return */
 #ifdef WINDOWS

@@ -5,6 +5,6 @@
 #include "define.h"
 
 /* domain resolve */
-void check_resolve(site_info, loc_info);
+void check_resolve(site_info, loc_info, MYSQL_RES *);
 
 #endif

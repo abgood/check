@@ -18,6 +18,7 @@
 /* table */
 #define INDEPE "indepe_info"
 #define COMMON "common_info"
+#define CDNINF "cdn_info"
 
 /* some file */
 #define TMP_FILE "tmp"
@@ -32,6 +33,7 @@
 #define S_PREFIX "s"
 #define RES_PREFIX "res"
 #define ASS_PREFIX "assist"
+#define CDN_PREFIX "cdn"
 
 /* cdn domain */
 #define CDN "cdn.shenqu.7road.net"
