@@ -12,12 +12,14 @@
 #include <string.h>
 #include <errno.h>
 #include <iconv.h>
+#include <stdarg.h>
 
 #ifndef WINDOWS
 #include <netdb.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/ip_icmp.h>
 #include <arpa/inet.h>
 #else
 #include <winsock2.h>

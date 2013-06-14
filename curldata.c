@@ -69,5 +69,9 @@ void curl_data(loc_info info) {
 
     strncpy(info->ip, ip, strlen(ip));
     strncpy(info->address, address, strlen(address));
+#ifndef WINDOWS
     strncpy(info->agent, agent, strlen(agent));
+#else
+    strcpy(info->agent, agent);
+#endif
 }

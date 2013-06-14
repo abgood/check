@@ -38,6 +38,11 @@
 /* cdn domain */
 #define CDN "cdn.shenqu.7road.net"
 
+/* ICMP protocol set */
+#define ICMP_REQUEST_TIMEOUT 2
+#define ICMP_DATA_LEN 20
+#define ICMP_ECHO_MAX 10
+
 /* local struct */
 typedef struct local_info {
     char *ip;

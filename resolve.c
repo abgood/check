@@ -1,13 +1,26 @@
 #include "check.h"
 
+void out_error(char *fmt, ...) {
+    va_list argp;
+
+    va_start(argp, fmt);
+    vfprintf(stderr, fmt, argp);
+    va_end(argp);
+
+#ifdef WINDOWS
+    getch();
+#endif
+    exit(1);
+}
+
 /* get local domain resolve ip */
 char *local_domain_to_ip(char *prefix, char *domain) {
     struct hostent *host_name;
     char *host_ip;
 
     if ((host_name = gethostbyname(domain)) == NULL) {
-        fprintf(stderr, "%s gethostbyname fail!!!\n", prefix);
-        exit(1);
+        // fprintf(stderr, "%s gethostbyname fail!!!\n", prefix);
+        out_error("%s gethostbyname fail!!!\n", prefix);
     }
 
     /* player local resolve ip */
@@ -33,8 +46,8 @@ void chk_resolve(char *domain, char *telecom_ip, char *unicom_ip, char *agent, c
             goto out_t;
         }
 
-out_t:  printf("player local resolve: %s %s\n\n", telecom_ip, domain);
-        exit(1);
+// out_t:  printf("player local resolve: %s %s\n\n", telecom_ip, domain);
+out_t:  out_error("player local resolve: %s %s\n\n", telecom_ip, domain);
     }
 
     if (strcmp(agent, "联通") == 0) {
@@ -48,8 +61,8 @@ out_t:  printf("player local resolve: %s %s\n\n", telecom_ip, domain);
             goto out_u;
         }
 
-out_u:  printf("player local resolve: %s %s\n\n", unicom_ip, domain);
-        exit(1);
+// out_u:  printf("player local resolve: %s %s\n\n", unicom_ip, domain);
+out_u:  out_error("player local resolve: %s %s\n\n", unicom_ip, domain);
     }
 }
 
@@ -101,7 +114,8 @@ void check_cdn(MYSQL_RES *res, char *agent) {
         }
 
 out_t:  set_cdn_ip(res, 1);
-        exit(1);
+        // win_exit();
+        out_error("","");
     }
 
     if (strcmp(agent, "联通") == 0) {
@@ -116,7 +130,8 @@ out_t:  set_cdn_ip(res, 1);
         }
 
 out_u:  set_cdn_ip(res, 2);
-        exit(1);
+        // win_exit();
+        out_error("","");
     }
 }
 
