@@ -7,6 +7,54 @@ static unsigned char recv_buff[LEN_1024 * LEN_1024] = {0};
 struct timeval send_time = {0};
 struct timeval recv_time = {0};
 
+#ifdef WINDOWS
+typedef struct icmp 
+{
+    BYTE   icmp_type;
+    BYTE   icmp_code;                 // Type sub code
+    USHORT icmp_cksum;
+    USHORT icmp_id;
+    USHORT icmp_seq;
+    ULONG  timestamp;
+} icmp;
+
+// IP header structure
+typedef struct ip
+{
+    //Suppose the BYTE_ORDER is LITTLE_ENDIAN
+    unsigned int   ip_hl:4;        // Length of the header
+    unsigned int   version:4;      // Version of IP
+    unsigned char  tos;            // Type of service
+    unsigned short total_len;      // Total length of the packet
+    unsigned short id;             // Unique identification
+    unsigned short frag_offset;    // Fragment offset
+    unsigned char  ip_ttl;            // Time to live
+    unsigned char  protocol;       // Protocol (TCP, UDP etc)
+    unsigned short checksum;       // IP checksum
+    unsigned int   sourceIP;       // Source IP
+    unsigned int   destIP;         // Destination IP
+} ip;
+
+int gettimeofday(struct timeval *tp, void *tzp)
+{
+    time_t clock;
+    struct tm tm;
+    SYSTEMTIME wtm;
+    GetLocalTime(&wtm);
+    tm.tm_year     = wtm.wYear - 1900;
+    tm.tm_mon     = wtm.wMonth - 1;
+    tm.tm_mday     = wtm.wDay;
+    tm.tm_hour     = wtm.wHour;
+    tm.tm_min     = wtm.wMinute;
+    tm.tm_sec     = wtm.wSecond;
+    tm. tm_isdst    = -1;
+    clock = mktime(&tm);
+    tp->tv_sec = clock;
+    tp->tv_usec = wtm.wMilliseconds * 1000;
+    return (0);
+}
+#endif
+
 /* calc icmp check sum */
 unsigned short calc_icmp_cksum(const void *packet, int len) {
     unsigned short chksum = 0;
@@ -196,6 +244,7 @@ void chk_ping(char *domain) {
         out_error("ping gethostbyname error!!!\n");
     }
     memcpy((char *)&dest_addr.sin_addr, (char *)(host_name->h_addr), host_name->h_length);
+    dest_addr.sin_family = host_name->h_addrtype;
 
     printf("\nPING %s(%s): %d bytes in ICMP packets\n", domain, inet_ntoa(dest_addr.sin_addr), ICMP_DATA_LEN);
 

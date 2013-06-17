@@ -23,6 +23,9 @@
 #include <arpa/inet.h>
 #else
 #include <winsock2.h>
+#include <ws2tcpip.h>
+#define ICMP_ECHO 8
+#define ICMP_ECHOREPLY 0
 #endif
 
 #include <curl/curl.h>
