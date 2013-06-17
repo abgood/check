@@ -3,6 +3,12 @@
 
 #include <mysql/mysql.h>
 
+/* set the platform
+ * set is win
+ * no set is linux
+ */
+// #define WINDOWS
+
 /* Length */
 #define LEN_8 8
 #define LEN_16 16
