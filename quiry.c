@@ -3,10 +3,12 @@
 MYSQL_RES *quiry(char *sql) {
     MYSQL *conn;
     MYSQL_RES *res;
+    char *db_str = "4A0ED31A14743F2AD9AC39F7E09AD9EF";
+    char *db_pawd;
 
     char *ip = "192.168.56.101";
-    char *db_pawd = "123456";
     int port = 3306;
+    db_pawd = aes_dec(db_str, 0);
 
     conn = mysql_init(NULL);
 

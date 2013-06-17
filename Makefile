@@ -6,6 +6,7 @@ CFLAGS = -g -O2 -Wall
 LIBMYSQL = `mysql_config --libs`
 LIBCURL = -lcurl
 LIBICONV = -liconv
+LIBSSL = -lssl
 
 # 执行文件
 TARGET = check
@@ -21,7 +22,7 @@ OBJS = $(patsubst %.c,%.o,$(SOURCES))
 
 # 生成执行文件
 $(TARGET):$(OBJS)
-	$(CC) $(OBJS) -o $(TARGET) $(LIBMYSQL) $(LIBCURL) $(LIBICONV)
+	$(CC) $(OBJS) -o $(TARGET) $(LIBMYSQL) $(LIBCURL) $(LIBICONV) $(LIBSSL)
 	chmod u+x $(TARGET)
 
 # 删除.o文件和执行文件

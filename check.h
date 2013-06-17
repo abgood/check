@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <iconv.h>
 #include <stdarg.h>
+#include <ctype.h>
 
 #ifndef WINDOWS
 #include <netdb.h>
@@ -31,6 +32,7 @@
 #include <curl/curl.h>
 #include <curl/types.h>
 #include <curl/easy.h>
+#include <openssl/aes.h>
 
 #include "define.h"
 #include "curldata.h"
@@ -39,5 +41,6 @@
 #include "handle.h"
 #include "resolve.h"
 #include "ping.h"
+#include "aes_code.h"
 
 #endif
