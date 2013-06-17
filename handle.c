@@ -16,6 +16,8 @@ void handle_common(site_info output, char *input_name, int input_id, MYSQL_RES *
     while ((row = mysql_fetch_row(res))) {
         memset(site, '\0', LEN_32);
         memset(domain, '\0', LEN_256);
+        memset(output->domain, '\0', LEN_64);
+
         strncpy(site, row[1], strlen(row[1]));
         strncpy(domain, row[2], strlen(row[2]));
 
@@ -86,7 +88,6 @@ void handle_indepe(site_info output, char *input_name, int input_id, MYSQL_RES *
         if ((s_i_end = strstr(agent, D_SITE_ID))) {
             strncpy(m_id, s_n_end + 1, s_i_end - s_n_end - 1);
         }
-        output->site_id = atoi(m_id);
 
         /* find input_id in record */
         i_n_start = strstr(agent, input_name);
@@ -105,8 +106,9 @@ void handle_indepe(site_info output, char *input_name, int input_id, MYSQL_RES *
                 output->unicom_ip = row[3];
                 output->port = atoi(row[4]);
                 output->resource = atoi(row[5]);
+                output->site_id = atoi(m_id);
             }
-            break;
+            continue;
         } else {
             strncpy(id_start_tmp, id_start, strlen(id_start));
             token = strtok(id_start_tmp, D_ID_FIELD);
@@ -122,11 +124,12 @@ void handle_indepe(site_info output, char *input_name, int input_id, MYSQL_RES *
                     output->unicom_ip = row[3];
                     output->port = atoi(row[4]);
                     output->resource = atoi(row[5]);
+                    output->site_id = atoi(m_id);
                 }
 
                 token = strtok(NULL, D_ID_FIELD);
             }
-            break;
+            continue;
         }
     }
 }
