@@ -15,8 +15,7 @@ MYSQL_RES *quiry(char *sql) {
     if (!(mysql_real_connect(conn, ip, "root", db_pawd, "web_check", port, NULL, 0))) {
         if (mysql_error(conn))
             fprintf(stderr, "connection error %d : %s\n", mysql_errno(conn), mysql_error(conn));
-        printf("Fail to connect mysql, ip:%s\tport:%d\n", ip, port);
-        exit(1);
+        out_error("Fail to connect mysql, ip:%s\tport:%d\n", ip, port);
     }
 
     // 查询数据库

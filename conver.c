@@ -24,8 +24,7 @@ char *conver_code(char *input, const char *from_code, const char *to_code) {
 
     flag = covert(to_code, from_code, input, len, output, olen);
     if (flag == -1) {
-        fprintf(stderr, "convert from %s to %s error!\n", from_code, to_code);
-        exit(1);
+        out_error("convert from %s to %s error!\n", from_code, to_code);
     }
 
     return output;

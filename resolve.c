@@ -114,7 +114,6 @@ void check_cdn(MYSQL_RES *res, char *agent) {
         }
 
 out_t:  set_cdn_ip(res, 1);
-        // win_exit();
         out_error("","");
     }
 
@@ -130,7 +129,6 @@ out_t:  set_cdn_ip(res, 1);
         }
 
 out_u:  set_cdn_ip(res, 2);
-        // win_exit();
         out_error("","");
     }
 }

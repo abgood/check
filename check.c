@@ -19,14 +19,12 @@ int main (int argc, char **argv) {
 
     /* init player_info */
     if (!(player_info = malloc(sizeof(struct local_info)))) {
-        fprintf(stderr, "player_info struct malloc memory error\n");
-        exit(1);
+        out_error("player_info struct malloc memory error\n");
     }
 
     /* init site_info */
     if (!(site_info = malloc(sizeof(struct info_list)))) {
-        fprintf(stderr, "site_info struct malloc memory error\n");
-        exit(1);
+        out_error("site_info struct malloc memory error\n");
     }
 
     printf("Please enter the game site if you have any questions: ");
@@ -42,23 +40,20 @@ int main (int argc, char **argv) {
     sprintf(indepe_sql, "select * from %s where site like \'%%%s%%\'", INDEPE, site_name);
     indepe_res = quiry(indepe_sql);
     if ((lines = mysql_num_rows(indepe_res)) == (my_ulonglong)0) {
-        printf("Don\'t find you input %s in %s table!!!\n", site, INDEPE);
-        exit(1);
+        out_error("Don\'t find you input %s in %s table!!!\n", site, INDEPE);
     }
     /* handle mysql_res */
     handle_indepe(site_info, site_name, atoi(site_id), indepe_res);
 
     if (strlen(site_info->telecom_ip) < LEN_8) {
-        printf("%s for %s not found!!!\n", site_name, site_id);
-        exit(1);
+        out_error("%s for %s not found!!!\n", site_name, site_id);
     }
 
     /* query common table */
     sprintf(common_sql, "select * from %s where site_name like \'%%%s%%\' or site_name like \'%%%s%%\'", COMMON, site_info->site_name, site_name);
     common_res = quiry(common_sql);
     if ((lines = mysql_num_rows(common_res)) == (my_ulonglong)0) {
-        printf("Don\'t find you input %s in %s table!!!\n", site, COMMON);
-        exit(1);
+        out_error("Don\'t find you input %s in %s table!!!\n", site, COMMON);
     }
     /* handle mysql_res */
     handle_common(site_info, site_name, atoi(site_id), common_res);
@@ -72,7 +67,7 @@ int main (int argc, char **argv) {
 
     /* check ping */
     sprintf(s_domain, "%s%d%s", S_PREFIX, site_info->site_id, site_info->domain);
-    // check_ping(s_domain, site_info->resource);
+    check_ping(s_domain, site_info->resource);
 
     /* check trace */
     check_trace(s_domain, site_info->resource);

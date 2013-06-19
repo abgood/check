@@ -27,8 +27,7 @@ void read_last_line(char *last_line) {
 
     /* read last line */
     if (!fgets(last_line, LEN_1024, fp)) {
-        fprintf(stderr, "read last one line error!\n");
-        exit(1);
+        out_error("read last one line error!\n");
     }
 
     fclose(fp);
