@@ -133,3 +133,13 @@ void handle_indepe(site_info output, char *input_name, int input_id, MYSQL_RES *
         }
     }
 }
+
+/* handle port_info */
+void handle_port(port_info port, MYSQL_RES *res) {
+    MYSQL_ROW row;
+
+    while ((row = mysql_fetch_row(res))) {
+        port->base_port = atoi(row[1]);
+        port->time_port = atoi(row[2]);
+    }
+}

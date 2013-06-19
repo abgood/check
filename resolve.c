@@ -19,7 +19,6 @@ char *local_domain_to_ip(char *prefix, char *domain) {
     char *host_ip;
 
     if ((host_name = gethostbyname(domain)) == NULL) {
-        // fprintf(stderr, "%s gethostbyname fail!!!\n", prefix);
         out_error("%s gethostbyname fail!!!\n", prefix);
     }
 
@@ -46,7 +45,6 @@ void chk_resolve(char *domain, char *telecom_ip, char *unicom_ip, char *agent, c
             goto out_t;
         }
 
-// out_t:  printf("player local resolve: %s %s\n\n", telecom_ip, domain);
 out_t:  out_error("player local resolve: %s %s\n\n", telecom_ip, domain);
     }
 
@@ -61,7 +59,6 @@ out_t:  out_error("player local resolve: %s %s\n\n", telecom_ip, domain);
             goto out_u;
         }
 
-// out_u:  printf("player local resolve: %s %s\n\n", unicom_ip, domain);
 out_u:  out_error("player local resolve: %s %s\n\n", unicom_ip, domain);
     }
 }

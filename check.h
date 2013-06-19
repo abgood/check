@@ -24,6 +24,7 @@
 #include "ping.h"
 #include "trace.h"
 #include "common.h"
+#include "port.h"
 
 #ifndef WINDOWS
 #include <netdb.h>

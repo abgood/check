@@ -94,7 +94,6 @@ int recv_icmp(int fd, char *buff, icmp_st *i_stat, recv_st *r_stat) {
 #ifndef WINDOWS
         if (errno == EAGAIN) {
             printf("Request time out.\n");
-            // i_stat->max_time = ~0;
         } else {
             printf("icmp receive error!!!\n");
         }

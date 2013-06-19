@@ -22,3 +22,10 @@ create table cdn_info (
     telecom_ip varchar(100) not null default '',
     unicom_ip varchar(100) not null default ''
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/* port信息 */
+create table port_info (
+    `Id` int(20) NOT NULL AUTO_INCREMENT primary key COMMENT '编号',
+    base_port integer not null default 0,
+    time_port integer not null default 0
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

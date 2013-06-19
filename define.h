@@ -25,6 +25,7 @@
 #define INDEPE "indepe_info"
 #define COMMON "common_info"
 #define CDNINF "cdn_info"
+#define PORTIF "port_info"
 
 /* some file */
 #define TMP_FILE "tmp"
@@ -40,6 +41,7 @@
 #define RES_PREFIX "res"
 #define ASS_PREFIX "assist"
 #define CDN_PREFIX "cdn"
+#define CDNPORT 8080
 
 /* cdn domain */
 #define CDN "cdn.shenqu.7road.net"
@@ -57,5 +59,11 @@ typedef struct local_info {
     char *address;
     char *agent;
 } *loc_info;
+
+/* port info */
+typedef struct port_list {
+    int base_port;
+    int time_port;
+} *port_info;
 
 #endif

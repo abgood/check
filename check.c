@@ -3,6 +3,7 @@
 int main (int argc, char **argv) {
     loc_info player_info;
     site_info site_info;
+    port_info port_info;
     my_ulonglong lines;
 
     char site[LEN_16] = {0};
@@ -11,11 +12,14 @@ int main (int argc, char **argv) {
     char indepe_sql[LEN_256] = {0};
     char common_sql[LEN_256] = {0};
     char cdn_sql[LEN_256] = {0};
+    char port_sql[LEN_256] = {0};
     char s_domain[LEN_32] = {0};
+    char res_domain[LEN_32] = {0};
 
     MYSQL_RES *indepe_res;
     MYSQL_RES *common_res;
     MYSQL_RES *cdn_res;
+    MYSQL_RES *port_res;
 
     /* init player_info */
     if (!(player_info = malloc(sizeof(struct local_info)))) {
@@ -25,6 +29,11 @@ int main (int argc, char **argv) {
     /* init site_info */
     if (!(site_info = malloc(sizeof(struct info_list)))) {
         out_error("site_info struct malloc memory error\n");
+    }
+
+    /* init port_info */
+    if (!(port_info = malloc(sizeof(struct port_list)))) {
+        out_error("port_info struct malloc memory error\n");
     }
 
     printf("Please enter the game site if you have any questions: ");
@@ -58,6 +67,15 @@ int main (int argc, char **argv) {
     /* handle mysql_res */
     handle_common(site_info, site_name, atoi(site_id), common_res);
 
+    /* query port table */
+    sprintf(port_sql, "select * from %s", PORTIF);
+    port_res = quiry(port_sql);
+    if ((lines = mysql_num_rows(port_res)) == (my_ulonglong)0) {
+        out_error("Don\'t find result in %s table!!!\n", PORTIF);
+    }
+    /* handle mysql_res */
+    handle_port(port_info, port_res);
+
     /* cdn result set */
     sprintf(cdn_sql, "select * from %s", CDNINF);
     cdn_res = quiry(cdn_sql);
@@ -71,6 +89,10 @@ int main (int argc, char **argv) {
 
     /* check trace */
     check_trace(s_domain, site_info->resource);
+
+    /* check port */
+    sprintf(res_domain, "%s%d%s", RES_PREFIX, site_info->site_id, site_info->domain);
+    check_port(s_domain, res_domain, site_info->resource, site_info->port, port_info);
 
     /* win program at the end of the return */
 #ifdef WINDOWS
