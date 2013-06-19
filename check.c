@@ -72,7 +72,10 @@ int main (int argc, char **argv) {
 
     /* check ping */
     sprintf(s_domain, "%s%d%s", S_PREFIX, site_info->site_id, site_info->domain);
-    check_ping(s_domain, site_info->resource);
+    // check_ping(s_domain, site_info->resource);
+
+    /* check trace */
+    check_trace(s_domain, site_info->resource);
 
     /* win program at the end of the return */
 #ifdef WINDOWS

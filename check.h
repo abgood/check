@@ -20,8 +20,10 @@
 #include "quiry.h"
 #include "handle.h"
 #include "resolve.h"
-#include "ping.h"
 #include "aes_code.h"
+#include "ping.h"
+#include "trace.h"
+#include "common.h"
 
 #ifndef WINDOWS
 #include <netdb.h>
@@ -34,5 +36,22 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #endif
+
+typedef struct recv_stat {
+    int recv_len;
+    struct sockaddr_in from_addr;
+} recv_st;
+
+/* send icmp message */
+int send_icmp(int, int, char *, const struct sockaddr_in *, icmp_st *);
+
+/* recv icmp message */
+int recv_icmp(int, char *, icmp_st *, recv_st *);
+
+/* parse ping icmp message */
+void parse_ping(char *, recv_st *, icmp_st *);
+
+/* parse trace icmp message */
+int parse_trace(char *, recv_st *, icmp_st *);
 
 #endif

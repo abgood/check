@@ -48,6 +48,8 @@
 #define ICMP_REQUEST_TIMEOUT 2
 #define ICMP_DATA_LEN 20
 #define ICMP_ECHO_MAX 10
+#define ICMP_HOP_MAX 30
+#define ICMP_TIMEOUT 11
 
 /* local struct */
 typedef struct local_info {
