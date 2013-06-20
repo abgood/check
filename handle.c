@@ -76,6 +76,7 @@ void handle_indepe(site_info output, char *input_name, int input_id, MYSQL_RES *
     while ((row = mysql_fetch_row(res))) {
         memset(output->site_name, '\0', LEN_16);
         memset(agent, '\0', LEN_128);
+        memset(m_id, '\0', LEN_8);
         strncpy(agent, row[1], strlen(row[1]));
         
         /* get master site_name */
@@ -87,6 +88,8 @@ void handle_indepe(site_info output, char *input_name, int input_id, MYSQL_RES *
         /* get master site_id */
         if ((s_i_end = strstr(agent, D_SITE_ID))) {
             strncpy(m_id, s_n_end + 1, s_i_end - s_n_end - 1);
+        } else {
+            strcpy(m_id, s_n_end + 1);
         }
 
         /* find input_id in record */
@@ -99,7 +102,7 @@ void handle_indepe(site_info output, char *input_name, int input_id, MYSQL_RES *
             id_start = m_i_start + 1;
         }
 
-        /* if have "~", compare id fields */
+        /* if have not "~", compare id fields */
         if (!strstr(id_start, D_ID_RANGE)) {
             if (input_id == atoi(id_start)) {
                 output->telecom_ip = row[2];
