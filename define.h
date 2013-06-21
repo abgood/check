@@ -41,6 +41,8 @@
 #define RES_PREFIX "res"
 #define ASS_PREFIX "assist"
 #define CDN_PREFIX "cdn"
+#define WEBPORT 80
+#define FLAPORT 843
 #define CDNPORT 8080
 
 /* cdn domain */

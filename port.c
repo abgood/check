@@ -41,6 +41,16 @@ void chk_port(char *domain, char *cdn, port_info port_info, int site_port) {
 
     printf("\n");
 
+    /* nginx port check */
+    conn_port(domain, WEBPORT);
+       
+    printf("\n");
+           
+    /* flash port check */
+    conn_port(domain, FLAPORT);
+               
+    printf("\n");
+
     /* resource port check */
     conn_port(cdn, CDNPORT);
 
