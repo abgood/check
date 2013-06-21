@@ -96,6 +96,7 @@ int main (int argc, char **argv) {
 
     /* win program at the end of the return */
 #ifdef WINDOWS
+    printf("Please press any key to exit...");
     getch();
 #endif
     return 0;

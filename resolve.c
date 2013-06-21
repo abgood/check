@@ -8,6 +8,7 @@ void out_error(char *fmt, ...) {
     va_end(argp);
 
 #ifdef WINDOWS
+    printf("Please press any key to exit...");
     getch();
 #endif
     exit(1);
